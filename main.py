@@ -1,5 +1,5 @@
 from url import parse_url
-from connection import create_connection
+from connection import create_connection, create_tls
 
 
 def main():
@@ -11,6 +11,9 @@ def main():
         print(f"Port: {port}")
 
         sock = create_connection(host, port)
+        if scheme == "https":
+            sock = create_tls(sock, host)
+            
         print("Connection successful!")
 
         sock.close()
@@ -21,4 +24,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

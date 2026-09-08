@@ -1,4 +1,5 @@
 import socket
+import ssl
 
 def create_connection(host, port):
     try:
@@ -16,3 +17,7 @@ def create_connection(host, port):
     
     except OSError as error:
         raise ConnectionError(f"Connection error: {error}")
+
+def create_tls(sock, host):
+    context = ssl.create_default_context()
+    return context.wrap_socket(sock, server_hostname=host)
