@@ -16,3 +16,9 @@ def build_request(method, host, path, headers=None, body=""):
     request += body
 
     return request
+
+def send_request(sock, method, host, path, headers=None, body=""):
+    request=build_request(method, host, path, headers, body)
+    request_bytes=request.encode("utf-8")
+
+    sock.sendall(request_bytes)
