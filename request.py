@@ -6,12 +6,11 @@ def build_request(method, host, path, headers=None, body=""):
     request += f"Host: {host}\r\n"
 
     for name, value in headers.items():
-        request += f"Host: {name}: {value}\r\n"
-
+        request += f"{name}: {value}\r\n"
 
     if body:
         body_bytes = body.encode("utf-8")
-        request += f"content-Lenght: {len(body_bytes)}\r\n"
+        request += f"Content-Length: {len(body_bytes)}\r\n"
 
     request += "\r\n"
     request += body

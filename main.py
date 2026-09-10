@@ -23,11 +23,15 @@ def main():
         print(f"Error: {error}")
 
 def main():
+    body = "Hello from HTTP Engine"
+
     request = build_request(
-        "GET",
+        "POST",
         "example.com",
-        "/"
+        "/",
+        body=body
     )
+    
     print(request)
 
 
