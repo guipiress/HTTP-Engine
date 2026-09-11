@@ -26,4 +26,10 @@ def separate_response(response_bytes):
     return headers_bytes, body
 
 
+def parse_headers(headers_bytes, body):
+    headers = headers_bytes.decode("iso-8859-1")
+
+    lines = headers.split("\r\n")
+
+    return lines
 
