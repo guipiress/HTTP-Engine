@@ -33,3 +33,11 @@ def parse_headers(headers_bytes, body):
 
     return lines
 
+
+def get_content_length(lines):
+    for line in lines:
+        if line.lower().startswith("content-length:"):
+            value = line.split(":", 1)[1].strip()
+            return int(value)
+
+    return None
