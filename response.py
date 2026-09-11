@@ -12,4 +12,18 @@ def recv_response(sock):
     return response_bytes
 
 
+def separate_response(response_bytes):
+    reparator = b"\r\n\r\n"
+
+    header_end = response_bytes.find(reparator)
+
+    if header_end == -1:
+        raise ValueError("Could not find end of headers")
+
+    headers_bytes = response_bytes[:header_end]
+    body = response_bytes[header_end + 4:]
+
+    return headers_bytes, body
+
+
 
