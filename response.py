@@ -41,3 +41,10 @@ def get_content_length(lines):
             return int(value)
 
     return None
+
+
+lines = parse_headers(headers_bytes, body)
+
+content_length = get_content_length(lines)
+
+print(content_length)
