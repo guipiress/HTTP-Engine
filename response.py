@@ -54,3 +54,15 @@ def get_content_length(lines):
             return int(value)
 
     return None
+
+
+def transfer_encoding_chunked(lines):
+    for line in lines:
+        if line.lower().startswith("transfer-encoding:"):
+            value = line.split(":", 1)[1].strip()
+
+            if value.lower() == "chunked":
+                return True
+
+    return False
+
