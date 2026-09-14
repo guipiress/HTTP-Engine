@@ -78,3 +78,23 @@ def get_transfer_encoding(lines):
 
     else:
         return None
+
+
+def receive_chunk_size(sock):
+    data = b""
+
+    while b"\r\n" not in data:
+        chunk = sock.recv(4096)
+
+        if not chunk:
+            raise ConnectionError("Connection closed while reading chunk size")
+
+        data += chunk
+
+    line, remaining = data.split(b"\r\n", 1)
+
+    chunk_size = int(line, 16)
+
+    return chunk_size, remaining
+
+
