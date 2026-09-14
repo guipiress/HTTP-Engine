@@ -1,7 +1,7 @@
 def recv_response(sock):
     response_bytes = b""
 
-    while True:
+    while b"\r\n\r\n" not in response_bytes:
         data = sock.recv(4096)
 
         if not data:
@@ -9,8 +9,21 @@ def recv_response(sock):
 
         response_bytes += data
 
-    return response_bytes
+    headers_bytes, body = separate_response(response_bytes)
 
+    lines = parse_headers(headers_bytes, body)
+
+    content_length = get_content_length(lines)
+
+    while len(body) < content_length:
+        data = sock.recv(4096)
+
+        if not data:
+            break
+
+        body += data
+
+    return headers_bytes, body
 
 def separate_response(response_bytes):
     reparator = b"\r\n\r\n"
@@ -41,10 +54,3 @@ def get_content_length(lines):
             return int(value)
 
     return None
-
-
-lines = parse_headers(headers_bytes, body)
-
-content_length = get_content_length(lines)
-
-print(content_length)

@@ -24,16 +24,10 @@ def main():
 
         send_request(sock, "GET", host, path, headers=headers)
 
-        response_bytes = recv_response(sock)
+        headers_bytes, body = recv_response(sock)
 
-        headers_bytes, body = separate_response(response_bytes)
-
-        lines = parse_headers(headers_bytes, body)
-
-        content_length = get_content_length(lines)
-
-        print(content_length)
-
+        print(f"Received body: {len(body)}")
+        
         sock.close()
 
     except (ValueError, ConnectionError, TimeoutError) as error:
