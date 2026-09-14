@@ -66,3 +66,15 @@ def transfer_encoding_chunked(lines):
 
     return False
 
+
+def get_transfer_encoding(lines):
+    content_length = get_content_length(lines)
+
+    if content_length is not None:
+        return "content-length"
+
+    elif transfer_encoding_chunked(lines):
+        return "chunked"
+
+    else:
+        return None
