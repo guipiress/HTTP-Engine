@@ -26,6 +26,8 @@ def main():
 
         headers_bytes, body = recv_response(sock)
 
+        print(headers_bytes.decode("iso-8859-1"))
+
         print(f"Received body: {len(body)}")
         
         sock.close()

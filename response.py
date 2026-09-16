@@ -13,17 +13,48 @@ def recv_response(sock):
 
     lines = parse_headers(headers_bytes, body)
 
-    content_length = get_content_length(lines)
+    transfer_encoding = get_transfer_encoding(lines)
 
-    while len(body) < content_length:
-        data = sock.recv(4096)
+    if transfer_encoding == "content-length":
+        content_length = get_content_length(lines)
 
-        if not data:
-            break
+        while len(body) < content_length:
+            data = sock.recv(4096)
 
-        body += data
+            if not data:
+                break
+
+            body += data
+
+    elif transfer_encoding == "chunked":
+        remaining = body
+        body = b""
+
+        while True:
+            chunk_size, remaining = receive_chunk_size(sock, remaining)
+
+            if chunk_size == 0:
+                break
+
+            chunk_body, remaining = receive_chunk_body(
+                sock,
+                chunk_size,
+                remaining
+            )
+            
+            print(f"Chunk body: {chunk_body[:50]!r}")
+            body += chunk_body
+
+            remaining = receive_chunk_crlf(
+                sock,
+                remaining
+            )
+
+    else:
+        raise ValueError("Could not determine response body length")
 
     return headers_bytes, body
+
 
 def separate_response(response_bytes):
     reparator = b"\r\n\r\n"
@@ -80,8 +111,8 @@ def get_transfer_encoding(lines):
         return None
 
 
-def receive_chunk_size(sock):
-    data = b""
+def receive_chunk_size(sock, remaining=b""):
+    data = remaining
 
     while b"\r\n" not in data:
         chunk = sock.recv(4096)
