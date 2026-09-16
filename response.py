@@ -98,3 +98,19 @@ def receive_chunk_size(sock):
     return chunk_size, remaining
 
 
+def receive_chunk_body(sock, chunk_size, remaining=b""):
+    body = remaining
+
+    while len(body) < chunk_size:
+        data = sock.recv(4096)
+
+        if not data:
+            raise ConnectionError("Connection closed while reading chunk body")
+
+        body += data
+
+    chunk_body = body[:chunk_size]
+    remaining = body[chunk_size:]
+
+    return chunk_body, remaining
+
