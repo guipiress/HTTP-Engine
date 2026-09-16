@@ -114,3 +114,19 @@ def receive_chunk_body(sock, chunk_size, remaining=b""):
 
     return chunk_body, remaining
 
+
+def receive_chunk_crlf(sock, remaining=b""):
+    data = remaining
+
+    while len(data) < 2:
+        chunk = sock.recv(4096)
+
+        if not chunk:
+            raise ConnectionError("Connection closed while reading chunk CRLF")
+
+        data += chunk
+
+    if data[:2] != b"\r\n":
+        raise ValueError("Invalid chunk CRLF")
+
+    return data[2:]
