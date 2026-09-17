@@ -29,6 +29,11 @@ def main():
         print(headers_bytes.decode("iso-8859-1"))
 
         print(f"Received body: {len(body)}")
+
+
+        print("----- BODY -----")
+        print(body.decode("utf-8"))
+        print("----- END BODY -----")
         
         sock.close()
 

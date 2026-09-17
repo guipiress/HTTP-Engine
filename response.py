@@ -34,20 +34,20 @@ def recv_response(sock):
             chunk_size, remaining = receive_chunk_size(sock, remaining)
 
             if chunk_size == 0:
+                remaining = receive_chunk_end(sock, remaining)
                 break
 
             chunk_body, remaining = receive_chunk_body(
-                sock,
-                chunk_size,
-                remaining
+            sock,
+            chunk_size,
+            remaining
             )
-            
-            print(f"Chunk body: {chunk_body[:50]!r}")
+
             body += chunk_body
 
             remaining = receive_chunk_crlf(
-                sock,
-                remaining
+            sock,
+            remaining
             )
 
     else:
@@ -159,5 +159,24 @@ def receive_chunk_crlf(sock, remaining=b""):
 
     if data[:2] != b"\r\n":
         raise ValueError("Invalid chunk CRLF")
+
+    return data[2:]
+
+
+def receive_chunk_end(sock, remaining=b""):
+    data = remaining
+
+    while len(data) < 2:
+        chunk = sock.recv(4096)
+
+        if not chunk:
+            raise ConnectionError(
+                "Connection closed while reading chunk end"
+            )
+
+        data += chunk
+
+    if data[:2] != b"\r\n":
+        raise ValueError("Invalid chunk end")
 
     return data[2:]
