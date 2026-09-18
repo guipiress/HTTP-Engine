@@ -198,3 +198,11 @@ def receive_trailers(sock, remaining=b""):
     trailers_bytes, remaining = data.split(b"\r\n\r\n", 1)
 
     return trailers_bytes, remaining
+
+
+def parse_trailers(trailers_bytes):
+    trailers = trailers_bytes.decode("iso-8859-1")
+
+    lines = trailers.split("\r\n")
+
+    return lines
