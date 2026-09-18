@@ -180,3 +180,21 @@ def receive_chunk_end(sock, remaining=b""):
         raise ValueError("Invalid chunk end")
 
     return data[2:]
+
+
+def receive_trailers(sock, remaining=b""):
+    data = remaining
+
+    while b"\r\n\r\n" not in data:
+        chunk = sock.recv(4096)
+
+        if not chunk:
+            raise ConnectionError(
+                "Connection closed while reading trailers"
+            )
+
+        data += chunk
+
+    trailers_bytes, remaining = data.split(b"\r\n\r\n", 1)
+
+    return trailers_bytes, remaining
