@@ -185,6 +185,9 @@ def receive_chunk_end(sock, remaining=b""):
 def receive_trailers(sock, remaining=b""):
     data = remaining
 
+    if data.startswith(b"\r\n"):
+        return b"", data[2:]
+
     while b"\r\n\r\n" not in data:
         chunk = sock.recv(4096)
 
